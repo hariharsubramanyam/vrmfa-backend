@@ -29,3 +29,16 @@ and the scraper will run, printing the scraped data to `stdout`.
 If you're running the PostgreSQL database, you can persist the scraped data in the database.
 
 `python main.py --dbname <your-database-name> --user <your-database-username>`
+
+## Code Structure
+
+* `requirements.txt` - Dependencies to install via `pip`
+* `.gitignore` - List of files to omit from the Git repo (I use `virtualenv`, so I've ignored my `virtualenv` directory)
+* `src/` - The source code
+  * `main.py` - The main entry point of the application.
+  * `reset_db.py` - Reset the database by dropping the tables used by the scraper and recreating them.
+  * `models/` - Useful data structures
+    * `imagedata.py` - Represents an image that can be placed in the museum.
+  * `deviantart/` - Contains the logic for interacting with DeviantArt
+    * `scraper.py` - Contains logic for running a scrape loop on a separate thread with periodically scrapes DeviantArt. 
+    * `scrape.py` - **The actual scraping functionality**
