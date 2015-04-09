@@ -1,3 +1,5 @@
+from deviantart.scrape import ScrapeImplementation
+
 import time
 import threading
 
@@ -9,16 +11,13 @@ class Scraper:
     Create the scraper.
 
     @param callback - The function to execute after each chunk of image data has been retrieved. 
-                      The callback should accept a list of ImageData instances. It will not be called
-                      with the same ImageData instance twice.
+                      The callback should accept a list of ImageData instances. The scraper does
+                      not handle de-duplication, so the callback should.
     @param ping_interval - The number of seconds to wait before pinging the website again.
-    @param max_imagedata_in_mem - The maximum number of ImageData instances that the scraper will be allowed 
-                       to store in memory.
     '''
-    def __init__(self, callback, ping_interval=25, max_imagedata_in_mem=1000):
+    def __init__(self, callback, ping_interval=25):
         self.callback = callback
         self.ping_interval = ping_interval
-        self.max_imagedata_in_mem = max_imagedata_in_mem
 
         # We want to avoid the current thread and the scrape loop thread from modifying the
         # thread_running and ticks_until_next_scrape variables at the same time.
@@ -35,6 +34,9 @@ class Scraper:
         # wait until it can scrape DeviantArt again.
         self.ticks_until_next_scrape = ping_interval
 
+        # Create the implementation object which performs the scraping.
+        self.scrape_implementation = ScrapeImplementation()
+
 
     '''
     The loop that will scrape periodically.
@@ -48,15 +50,10 @@ class Scraper:
             # Determine if we should scrape on this tick.
             self.tick()
             if self.should_scrape():
-                self.scrape()
+                # Scrape the images and trigger the callback.
+                images_data_items = self.scrape_implementation.scrape()
+                self.callback(images_data_items)
             time.sleep(1)
-
-    '''
-    Scrape DeviantArt, parse the HTML to get the list of ImageData, and then call the callback.
-    '''
-    def scrape(self):
-        #TODO(Harihar): Actually implement something here.
-        print "Hello world"
 
     '''
     Run the scraper. This will launch another thread, so make sure to terminate it by calling
@@ -121,9 +118,8 @@ class Scraper:
         self.thread_running = new_value
         self.mutex.release()
 
-
     '''
     Return string representation of this object.
     '''
     def __repr__(self):
-        return "Scraper(ping_interval=%d, max_imagedata_in_mem=%d)" % (self.ping_interval, self.max_imagedata_in_mem)
+        return "Scraper(ping_interval=%d)" % (self.ping_interval,)

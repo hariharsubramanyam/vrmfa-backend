@@ -18,9 +18,13 @@ if __name__=="__main__":
         print('You pressed Ctrl+C!')
         sys.exit(0)
 
-    # Create the scraper, the callback is currently a function that does nothing.
-    #TODO(Harihar): The callback should write the ImageData to a database.
-    scraper = Scraper(lambda x: x, ping_interval=1)
+    '''
+    Callback for when the scraper pulls a new list of images.
+    '''
+    def callback(image_data_items):
+        print image_data_items
+
+    scraper = Scraper(callback, ping_interval=1)
 
     # Run the scraper.
     scraper.run()
