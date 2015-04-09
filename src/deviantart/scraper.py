@@ -29,6 +29,7 @@ class Scraper:
 
         # The thread running the loop for the scraper.
         self.thread = threading.Thread(target=self.scrape_loop)
+        self.thread.daemon = True
 
         # The scrape loop runs every second (a tick). This is the number of ticks it must
         # wait until it can scrape DeviantArt again.
