@@ -42,22 +42,12 @@ class Scraper:
     def scrape_loop(self):
         while True:
             # Check if we should return (and therefore kill the thread).
-            self.mutex.acquire()
-            if not self.thread_running:
-                self.mutex.release()
+            if not self.is_thread_running():
                 return
 
             # Determine if we should scrape on this tick.
-            self.ticks_until_next_scrape -= 1
-            if self.ticks_until_next_scrape == 0:
-                shouldScrape = True
-                self.ticks_until_next_scrape = self.ping_interval
-            else:
-                shouldScrape = False
-            self.mutex.release()
-
-            # Scrape if needed, then sleep until the next tick.
-            if shouldScrape:
+            self.tick()
+            if self.should_scrape():
                 self.scrape()
             time.sleep(1)
 
@@ -73,13 +63,10 @@ class Scraper:
     stop().
     '''
     def run(self):
-        self.mutex.acquire()
-        if self.thread_running:
-            self.mutex.release()
+        if self.is_thread_running():
             return
-        self.thread_running = True
-        self.ticks_until_next_scrape = self.ping_interval
-        self.mutex.release()
+        self.set_thread_running(True)
+        self.reset_ticks_until_scrape()
         self.thread.start()
 
     '''
@@ -89,6 +76,51 @@ class Scraper:
         self.mutex.acquire()
         self.thread_running = False
         self.mutex.release()
+
+    '''
+    Reset the number of ticks needed until the next scrape (while holding the mutex).
+    '''
+    def reset_ticks_until_scrape(self):
+        self.mutex.acquire()
+        self.ticks_until_next_scrape = self.ping_interval
+        self.mutex.release()
+
+    '''
+    Decrement the ticks_until_next_scrape when the mutex is acquired.
+    '''
+    def tick(self):
+        self.mutex.acquire()
+        self.ticks_until_next_scrape -= 1
+        self.mutex.release()
+
+    '''
+    @return Whether we need to scrape on this tick (check while holding the mutex).
+    '''
+    def should_scrape(self):
+        self.mutex.acquire()
+        ticks_until_scrape = self.ticks_until_next_scrape
+        self.mutex.release()
+        return ticks_until_scrape <= 0
+
+    '''
+    Acquire the mutex and check whether the scrape loop thread is running.
+    @return - Whether the scrape loop thread is running.
+    '''
+    def is_thread_running(self):
+        self.mutex.acquire()
+        thread_running = self.thread_running
+        self.mutex.release()
+        return thread_running
+
+    '''
+    Set whether the thread is running.
+    @param new_value - whether the thread is running (True or False).
+    '''
+    def set_thread_running(self, new_value):
+        self.mutex.acquire()
+        self.thread_running = new_value
+        self.mutex.release()
+
 
     '''
     Return string representation of this object.
