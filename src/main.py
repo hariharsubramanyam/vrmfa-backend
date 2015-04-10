@@ -17,7 +17,7 @@ if __name__=="__main__":
 
 
     # Create a scraper.
-    scraper = Scraper(callback, ping_interval=1)
+    scraper = Scraper(callback, ping_interval=60)
 
     # Run the scraper.
     scraper.run()
