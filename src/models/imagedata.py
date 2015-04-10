@@ -13,3 +13,9 @@ class ImageData:
     '''
     def __repr__(self):
         return str(self.url)
+
+    def serialize(self):
+        return str(self.url)
+
+    def deserialize(self, string):
+        self.url = string
