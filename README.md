@@ -9,17 +9,6 @@ If you install pip, just run the following command (when in the directory contai
 
 `pip install -r requirements.txt`
 
-
-**Ignore this**
-You can also persist the data in a PostgreSQL database. Make sure to install [PostgreSQL](http://www.postgresql.org/).
-
-Create your database and user. Then, run
-
-`python reset_db.py --dbname <your-database-name> --user <your-database-username>`
-
-This will create the table **images** which will contain the images. Note that if the table already 
-exists, it will be dropped.
-
 ## Usage
 Simply run
 
@@ -27,11 +16,13 @@ Simply run
 
 and the scraper will run, printing the scraped data to `stdout`.
 
-**(still need to implement)**
+You can also persist to a [**Redis**](http://redis.io/) cache. 
 
-If you're running the PostgreSQL database, you can persist the scraped data in the database.
+`python main.py --use-redis`
 
-`python main.py --dbname <your-database-name> --user <your-database-username>`
+However, the script assumes a default host, port, and db for the Redis instance, so you may want
+to tweak main accordingly (actually, these should be command line arguments). I'll implement
+that later.
 
 ## Code Structure
 
@@ -39,7 +30,6 @@ If you're running the PostgreSQL database, you can persist the scraped data in t
 * `.gitignore` - List of files to omit from the Git repo (I use `virtualenv`, so I've ignored my `virtualenv` directory)
 * `src/` - The source code
   * `main.py` - The main entry point of the application.
-  * `reset_db.py` - Reset the database by dropping the tables used by the scraper and recreating them.
   * `models/` - Useful data structures
     * `imagedata.py` - Represents an image that can be placed in the museum.
   * `deviantart/` - Contains the logic for interacting with DeviantArt
