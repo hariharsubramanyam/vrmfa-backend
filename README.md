@@ -47,3 +47,4 @@ If you're running the PostgreSQL database, you can persist the scraped data in t
     * `scrape.py` - **The actual scraping functionality**
   * `datastore` - Various datastores that the scraper can persist to.
     * `image_set.py` - An in-memory, threadsafe set of fixed capacity with random sampling and random eviction.
+    * `redis_store.py` - Allow storing in Redis, a popular in-memory key-value store.
