@@ -15,12 +15,17 @@ class ImageSet:
 
     '''
     Add an ImageData item to the image set.
+    @param image_data - The ImageData to add to the set.
+    @param The item that was deleted in order to make room for the new addition, or None if there
+        was no deletion.
     '''
     def add_image(self, image_data):
         with self.mutex:
             self.image_set.add(image_data)
             if len(self.image_set) > self.capacity:
-                self.image_set.remove(random.choice(self.image_set))
+                deleted = random.choice(self.image_set)
+                self.image_set.remove(deleted)
+                return deleted
 
     '''
     Pick n elements randomly from the image set. If n > len(image set), then we'll return 
