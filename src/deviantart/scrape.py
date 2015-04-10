@@ -32,7 +32,7 @@ class ScrapeImplementation:
         image_data_items = []
         for thumbnail in thumbnails:
             if thumbnail.has_attr(self.FULL_IMG_ATTR):
-                image_data_items.append(thumbnail[self.FULL_IMG_ATTR])
+                image_data_items.append(ImageData(thumbnail[self.FULL_IMG_ATTR]))
             elif thumbnail.has_attr(self.IMG_ATTR):
-                image_data_items.append(thumbnail[self.IMG_ATTR])
+                image_data_items.append(ImageData(thumbnail[self.IMG_ATTR]))
         return image_data_items
