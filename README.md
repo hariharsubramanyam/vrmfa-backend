@@ -9,6 +9,8 @@ If you install pip, just run the following command (when in the directory contai
 
 `pip install -r requirements.txt`
 
+
+**Ignore this**
 You can also persist the data in a PostgreSQL database. Make sure to install [PostgreSQL](http://www.postgresql.org/).
 
 Create your database and user. Then, run
@@ -25,7 +27,8 @@ Simply run
 
 and the scraper will run, printing the scraped data to `stdout`.
 
-(still need to implement).
+**(still need to implement)**
+
 If you're running the PostgreSQL database, you can persist the scraped data in the database.
 
 `python main.py --dbname <your-database-name> --user <your-database-username>`
@@ -42,3 +45,5 @@ If you're running the PostgreSQL database, you can persist the scraped data in t
   * `deviantart/` - Contains the logic for interacting with DeviantArt
     * `scraper.py` - Contains logic for running a scrape loop on a separate thread with periodically scrapes DeviantArt. 
     * `scrape.py` - **The actual scraping functionality**
+  * `datastore` - Various datastores that the scraper can persist to.
+    * `image_set.py` - An in-memory, threadsafe set of fixed capacity with random sampling and random eviction.
