@@ -1,6 +1,7 @@
 from models.imagedata import ImageData
 
 from bs4 import BeautifulSoup
+import random
 import time
 import requests
 
@@ -21,7 +22,7 @@ class ScrapeImplementation:
     '''
     def scrape(self):
         # Get the HTML.
-        html_doc = requests.get(self.URL).text
+        html_doc = requests.get(self.URL + "?offset=" + str(random.randint(0, 24*500))).text
 
         # Create the soup object for extracting tags and stuff.
         soup = BeautifulSoup(html_doc)
@@ -35,4 +36,6 @@ class ScrapeImplementation:
                 image_data_items.append(ImageData(thumbnail[self.FULL_IMG_ATTR]))
             elif thumbnail.has_attr(self.IMG_ATTR):
                 image_data_items.append(ImageData(thumbnail[self.IMG_ATTR]))
+            else:
+                image_data_items.append(ImageData(thumbnail.img["src"]))
         return image_data_items

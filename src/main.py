@@ -19,7 +19,7 @@ if __name__=="__main__":
 
     if args.use_redis:
         # Persist to redis.
-        redis_store = RedisStore('localhost', 6379, 0, capacity=40000)
+        redis_store = RedisStore('localhost', 6379, 0, capacity=2000)
 
         def callback(image_data_items):
             for item in image_data_items:
@@ -29,7 +29,7 @@ if __name__=="__main__":
             print image_data_items
 
     # Create a scraper.
-    scraper = Scraper(callback, ping_interval=60)
+    scraper = Scraper(callback, ping_interval=1)
 
 
     # Run the scraper.
