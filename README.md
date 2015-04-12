@@ -9,27 +9,32 @@ If you install pip, just run the following command (when in the directory contai
 
 `pip install -r requirements.txt`
 
+You should also make sure you have [**Redis**](http://redis.io/).
+
 ## Usage
-Simply run
+Data is persisted in a [**Redis**](http://redis.io/) cache. 
 
-`python main.py`
+To run the scraper, run
 
-and the scraper will run, printing the scraped data to `stdout`.
+`python run_scraper.py --host <host> --port <port> --db <db>`
 
-You can also persist to a [**Redis**](http://redis.io/) cache. 
+Where the host, port number, and database number are specified for the Redis cache. If you omit them,
+the scraper will just print to `stdout`.
 
-`python main.py --use-redis`
+To run the server (which provides the API), run
 
-However, the script assumes a default host, port, and db for the Redis instance, so you may want
-to tweak main accordingly (actually, these should be command line arguments). I'll implement
-that later.
+`python server.py --host <host> --port <port> --db <db>`
+
+Where host, port, and database number are specified for the Redis cache. If you omit them, the server
+won't run.
 
 ## Code Structure
 
 * `requirements.txt` - Dependencies to install via `pip`
 * `.gitignore` - List of files to omit from the Git repo (I use `virtualenv`, so I've ignored my `virtualenv` directory)
 * `src/` - The source code
-  * `main.py` - The main entry point of the application.
+  * `run_scraper.py` - The main entry point of the scraper.
+  * `server.py` - Runs a Flask server to provide an API to the museum.
   * `models/` - Useful data structures
     * `imagedata.py` - Represents an image that can be placed in the museum.
   * `deviantart/` - Contains the logic for interacting with DeviantArt

@@ -12,14 +12,21 @@ import signal
 import sys
 
 if __name__=="__main__":
+
+    # Typical values are host = localhost, port = 6379, db = 0.
     parser = argparse.ArgumentParser()
-    parser.add_argument("--use-redis", dest="use_redis", action="store_true")
+    parser.add_argument("--host", type=str)
+    parser.add_argument("--port", type=int)
+    parser.add_argument("--db", type=int)
 
     args = parser.parse_args()
+    host = args.host
+    port = args.port
+    db = args.db
 
-    if args.use_redis:
+    if None not in (host, port, db):
         # Persist to redis.
-        redis_store = RedisStore('localhost', 6379, 0, capacity=2000)
+        redis_store = RedisStore(host, port, db, capacity=2000)
 
         def callback(image_data_items):
             for item in image_data_items:
