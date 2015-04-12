@@ -26,7 +26,8 @@ if __name__=="__main__":
                 redis_store.add_image(item)
     else:
         def callback(image_data_items):
-            print image_data_items
+            for image_data in image_data_items:
+                print image_data
 
     # Create a scraper.
     scraper = Scraper(callback, ping_interval=1)
