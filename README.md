@@ -38,8 +38,8 @@ won't run.
   * `models/` - Useful data structures
     * `imagedata.py` - Represents an image that can be placed in the museum.
   * `deviantart/` - Contains the logic for interacting with DeviantArt
-    * `scraper.py` - Contains logic for running a scrape loop on a separate thread with periodically scrapes DeviantArt. 
+    * `scraper.py` - Contains logic for running a scrape loop that periodically scrapes DeviantArt. 
     * `scrape.py` - **The actual scraping functionality**
   * `datastore` - Various datastores that the scraper can persist to.
-    * `image_set.py` - An in-memory, threadsafe set of fixed capacity with random sampling and random eviction.
+    * `image_set.py` - An in-memory set of fixed capacity with random sampling and random eviction.
     * `redis_store.py` - Allow storing in Redis, a popular in-memory key-value store.

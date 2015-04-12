@@ -1,8 +1,7 @@
-import threading
 import random
 
 '''
-A thread-safe in-memory set of image data items.
+An in-memory set of image data items.
 '''
 class ImageSet:
     '''
@@ -10,7 +9,6 @@ class ImageSet:
     '''
     def __init__(self, capacity=100000):
         self.capacity = capacity
-        self.mutex = threading.Lock()
         self.image_set = set()
 
     '''
@@ -20,17 +18,15 @@ class ImageSet:
         was no deletion.
     '''
     def add_image(self, image_data):
-        with self.mutex:
-            self.image_set.add(image_data)
-            if len(self.image_set) > self.capacity:
-                deleted = random.choice(self.image_set)
-                self.image_set.remove(deleted)
-                return deleted
+        self.image_set.add(image_data)
+        if len(self.image_set) > self.capacity:
+            deleted = random.choice(self.image_set)
+            self.image_set.remove(deleted)
+            return deleted
 
     '''
     Pick n elements randomly from the image set. If n > len(image set), then we'll return 
     the entire image set.
     '''
     def pick_n_images(self, n):
-        with self.mutex:
-            return random.sample(self.image_set, min(n, len(image_set)))
+        return random.sample(self.image_set, min(n, len(image_set)))

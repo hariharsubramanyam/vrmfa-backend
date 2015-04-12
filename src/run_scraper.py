@@ -42,7 +42,3 @@ if __name__=="__main__":
 
     # Run the scraper.
     scraper.run()
-
-    print "Type any value (and enter) to quit"
-    val = raw_input()
-    scraper.stop()
