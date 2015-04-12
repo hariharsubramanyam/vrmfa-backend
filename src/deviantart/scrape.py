@@ -11,7 +11,7 @@ it into ImageData objects.
 '''
 class ScrapeImplementation:
     def __init__(self):
-        self.UPPER_BOUND = 9000
+        self.UPPER_BOUND = 40000
         self.URL = "http://www.deviantart.com/browse/all/"
         self.THUMBNAIL_CLASS = "thumb"
         self.FULL_IMG_ATTR = "data-super-full-img"
@@ -23,7 +23,8 @@ class ScrapeImplementation:
     '''
     def scrape(self):
         # Get the HTML from a random page.
-        html_doc = requests.get(self.URL + "?offset=" + str(random.randint(0, self.UPPER_BOUND))).text
+        page_offset = str(random.randint(0, self.UPPER_BOUND))
+        html_doc = requests.get(self.URL + "?offset=" + page_offset).text
 
         # Create the soup object for extracting tags and stuff.
         soup = BeautifulSoup(html_doc)
