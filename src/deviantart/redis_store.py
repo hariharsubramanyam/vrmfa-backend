@@ -1,4 +1,5 @@
 import redis
+from imagedata import ImageData
 
 class RedisStore:
     def __init__(self, host, port, db, capacity=10000, expiry_time=24*60*60, set_name="images"):
@@ -15,4 +16,4 @@ class RedisStore:
     def pick_n_images(self, n):
         set_size = self.redis.scard(self.set_name)
         random_members = self.redis.srandmember(self.set_name, min(n, set_size))
-        return random_members
+        return [ImageData(x) for x in random_members]

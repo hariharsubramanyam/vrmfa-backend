@@ -4,12 +4,12 @@ import json
 Represents the data for one image pulled from DeviantArt.
 '''
 class ImageData:
-    '''
-    @param url - The url to the image on DeviantArt.
-    '''
     def __init__(self, url, descr):
         self.url = url
         self.descr = descr
+
+    def __init__(self, string):
+        self.deserialize(string)
 
     '''
     Return string representation of this object.
