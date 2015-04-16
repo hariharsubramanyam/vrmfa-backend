@@ -1,4 +1,4 @@
-from models.imagedata import ImageData
+from imagedata import ImageData
 
 from bs4 import BeautifulSoup
 import random

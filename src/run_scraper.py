@@ -2,9 +2,9 @@
 Main entrypoint to the application.
 '''
 
-from models.imagedata import ImageData 
+from deviantart.imagedata import ImageData 
 from deviantart.scraper import Scraper
-from datastore.redis_store import RedisStore
+from deviantart.redis_store import RedisStore
 
 
 import argparse
