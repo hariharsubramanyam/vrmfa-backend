@@ -1,4 +1,4 @@
-
+import uuid
 '''
 An enum that represents all possible arrangements of doors in a room. Note that we consider two rooms
 identical if one can be rotated to get the other.
@@ -125,21 +125,31 @@ class Wall:
         self.endx = endx
         self.endy = endy
         self.url = url
+    def __str__(self):
+        return "Wall((%s, %s) -> (%s, %s), url=%s)" % (self.startx, self.starty, self.endx, self.endy, self.url)
+    __repr__ = __str__
 
 '''
 Represents a room in a museum.
 '''
 class Room:
     '''
-    @param room_id - An unique identifier for the room.
-    @param room_type - A roomtype.RoomType.
+    @param room_type - A room type as defined in RoomType.
     @param walls - A list of Wall objects.
-    @param rotation - A roomtype.Rotation.
+    @param rotation - A rotation as defined in Rotation.
+    @param room_id - An unique identifier for the room.
     '''
-    def __init__(self, room_type, walls=None, rotation=Rotation.clockwise0):
+    def __init__(self, room_type, rotation, walls=None, room_id=None):
+        if room_id is None:
+            self.room_id = uuid.uuid4().hex
+        else:
+            self.room_id = room_id
         self.room_type = room_type
         self.rotation = rotation
-        if walls is not None:
+        if walls is None:
             self.walls = []
         else:
             self.walls = walls
+    def __str__(self):
+        return "Room(id=%s, rotation=%s, room_type=%s, walls=%s)" % (self.room_id, self.rotation, self.room_type, self.walls)
+    __repr__ = __str__
