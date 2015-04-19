@@ -1,7 +1,7 @@
 '''
 Simple script to test the logic for computing roomtype rotations.
 '''
-from roomtypes import *
+from room import *
 
 def test():
     # Each element is a test.

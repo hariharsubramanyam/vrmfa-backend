@@ -1,3 +1,4 @@
+
 '''
 An enum that represents all possible arrangements of doors in a room. Note that we consider two rooms
 identical if one can be rotated to get the other.
@@ -8,7 +9,7 @@ north_south = Two doors - one on the north, one on the south.
 north_east_south = Three doors - only the west wall has no door.
 north_east_south_west = Four doors - all walls have doors.
 '''
-class RoomType():
+class RoomType:
     north = 1
     north_east = 2
     north_south = 3
@@ -18,7 +19,7 @@ class RoomType():
 '''
 Represents a rotation of a room.
 '''
-class Rotation():
+class Rotation:
     clockwise0 = 0
     clockwise90 = 90
     clockwise180 = 180
@@ -103,3 +104,42 @@ def compute_rotated_room(north, east, south, west):
         raise Exception("Failed to compute room type and rotation for (%s, %s, %s, %s)" % (north, east, south, west))
 
     return room_type, rotation
+
+'''
+Represents a wall in the room. 
+'''
+class Wall:
+    '''
+    @param startx - The x coordinate that starts the wall. It must be between 0 and 1.
+    @param starty - The y coordinate that starts the wall. It must be between 0 and 1.
+    @param endx - The x coordinate that ends the wall. It must be between 0 and 1.
+    @param endy - The y coordinate that ends the wall. It must be between 0 and 1.
+    '''
+    def __init__(self, startx, starty, endx, endy, url=None):
+        def out_of_bounds(x, y):
+            return x < 0 or x > 1 or y < 0 or y > 1
+        if out_of_bounds(startx, starty) or out_of_bounds(endx, endy):
+            raise Exception("The wall (%s, %s) -> (%s, %s) is out of bounds", startx, starty, endx, endy)
+        self.startx = startx
+        self.starty = starty
+        self.endx = endx
+        self.endy = endy
+        self.url = url
+
+'''
+Represents a room in a museum.
+'''
+class Room:
+    '''
+    @param room_id - An unique identifier for the room.
+    @param room_type - A roomtype.RoomType.
+    @param walls - A list of Wall objects.
+    @param rotation - A roomtype.Rotation.
+    '''
+    def __init__(self, room_type, walls=None, rotation=Rotation.clockwise0):
+        self.room_type = room_type
+        self.rotation = rotation
+        if walls is not None:
+            self.walls = []
+        else:
+            self.walls = walls
