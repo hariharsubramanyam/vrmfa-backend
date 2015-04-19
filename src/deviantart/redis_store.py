@@ -16,4 +16,4 @@ class RedisStore:
     def pick_n_images(self, n):
         set_size = self.redis.scard(self.set_name)
         random_members = self.redis.srandmember(self.set_name, min(n, set_size))
-        return [ImageData(x) for x in random_members]
+        return [ImageData(None, None).deserialize(x) for x in random_members]

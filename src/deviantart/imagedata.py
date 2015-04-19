@@ -21,3 +21,4 @@ class ImageData:
         deserialized_json = json.loads(string)
         self.descr = deserialized_json["descr"]
         self.url = deserialized_json["url"]
+        return self

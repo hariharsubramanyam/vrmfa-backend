@@ -114,8 +114,9 @@ class Wall:
     @param starty - The y coordinate that starts the wall. It must be between 0 and 1.
     @param endx - The x coordinate that ends the wall. It must be between 0 and 1.
     @param endy - The y coordinate that ends the wall. It must be between 0 and 1.
+    @param image_data - The ImageData object on this wall.
     '''
-    def __init__(self, startx, starty, endx, endy, url=None):
+    def __init__(self, startx, starty, endx, endy, image_data=None):
         def out_of_bounds(x, y):
             return x < 0 or x > 1 or y < 0 or y > 1
         if out_of_bounds(startx, starty) or out_of_bounds(endx, endy):
@@ -124,9 +125,9 @@ class Wall:
         self.starty = starty
         self.endx = endx
         self.endy = endy
-        self.url = url
+        self.image_data = image_data 
     def __str__(self):
-        return "Wall((%s, %s) -> (%s, %s), url=%s)" % (self.startx, self.starty, self.endx, self.endy, self.url)
+        return "Wall((%s, %s) -> (%s, %s), image_data=%s)" % (self.startx, self.starty, self.endx, self.endy, self.image_data)
     __repr__ = __str__
 
 '''
