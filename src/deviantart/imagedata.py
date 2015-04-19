@@ -8,9 +8,6 @@ class ImageData:
         self.url = url
         self.descr = descr
 
-    def __init__(self, string):
-        self.deserialize(string)
-
     '''
     Return string representation of this object.
     '''
