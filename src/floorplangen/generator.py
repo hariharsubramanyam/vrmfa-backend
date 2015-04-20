@@ -1,57 +1,81 @@
 import random
 
-######################
-# TESTS
-######################
+def build_museum(min_rooms = 10, max_rooms = 15):
+    # 1. 
+    # choose a random number of total_rooms in the museum
+    total_rooms = random.randrange(min_rooms, max_rooms)
+    print "Number of rooms in this museum:", total_rooms
 
-# creates 5 random rooms
-def test_random_walls():
-    r = Room(0,0)
-    print "Ititial doors: ", r.doors
-    for i in xrange(0,5):
-        r.randomize_walls()
-        r.debug_print()
+    all_rooms = []
+    
+    # 2. 
+    # create an initial room, and decrement total_rooms
+    num_doors = random.randrange(2, 4+1) # TODO: make this smarter                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                            w  
+    start_room = MuseumRoom(0, 0, num_doors)
+        # chooses a random number of doors for the room, and
+        # assigns these doors to random subset of the walls
+    all_rooms.append(start_room)
+    total_rooms -= 1
 
-# creates and debug-prints a museum
-def test_museum():
-    m = Museum()
+    while total_rooms > 0:
+        # 4. 
+        # choose a random open door and add a new room to it
+        (new_room_x, new_room_y) = get_new_random_location(all_rooms)
+        num_doors = random.randrange(1, 4+1)
+        new_room = MuseumRoom(new_room_x, new_room_y, num_doors)
+        all_rooms.append(new_room)
+        total_rooms -= 1
 
-######################
-# MUSEUM Data Structure
-######################
-class Museum:
-    """Defines a collection of rooms that fit together with valid doors"""
-    def __init__(self):
-        self.rooms = []
-        # create an initial room in the southeast corner of the museum
-        self.start = Room(0,0,{"N":True,"E":True,"S":False,"W":False})
-        self.rooms.append(self.start)
-        
-        self.rooms_with_adjacents = []
-        # create adjacent rooms in a BFS order
-        i = 0
-        while i < len(self.rooms) and i < 30:
-            self.create_adjacent_rooms(self.rooms[i])
-            i += 1
-        
-        self.debug_print()
+        # 5.
+        # Repeat step 4 while total_rooms > 0
 
-    # prints each room in the museum in a human-readable diagram
-    def debug_print(self):
-        for r in self.rooms:
-            r.debug_print()
+    # 6.
+    # Examine each wall of each room.
+    # If there is a door but no connecting room, remove the door
+    # If there isn't a door but the connecting room has one, add a door
+    fix_doors(all_rooms)
 
-    # given a room, looks at each of its doors and creates a new room where needed
-    def create_adjacent_rooms(self, room):
-        # ensure we don't re-create rooms that have already been created
-        if room in self.rooms_with_adjacents:
-            print "adjacents have already been created for room (" + str(room.x) + "," + str(room.y) + ")"
-            return
+    debug_print(all_rooms)
 
+
+def fix_doors(current_rooms):
+    for room in current_rooms:
         # for each of North, East, South, and West, check if there's a door on that wall
         for i in xrange(0,3+1):
             direction = room.int_to_dir(i)
-            if room.doors[direction]:
+            new_x = room.x
+            new_y = room.y
+            if i == 0:
+                new_y += 1
+            elif i == 1:
+                new_x += 1
+            elif i == 2:
+                new_y -= 1
+            elif i == 3:
+                new_x -= 1
+                
+            # add doors where needed            
+            if room_exists(new_x, new_y, current_rooms) and not room.doors[direction]:
+                room.doors[direction] = True
+
+            # remove doors where needed
+            if not room_exists(new_x, new_y, current_rooms) and room.doors[direction]:
+                room.doors[direction] = False
+
+
+
+def get_new_random_location(current_rooms, override_doors = False):
+    # create a list of all possible room locations
+    # choose one randomly from it, and return its (x,y) coords
+    # if override_doors is flagged, it will also choose from non-door walls
+
+    possible_locations = []
+    
+    for room in current_rooms:
+        # for each of North, East, South, and West, check if there's a door on that wall
+        for i in xrange(0,3+1):
+            direction = room.int_to_dir(i)
+            if room.doors[direction] or override_doors:
                 new_x = room.x
                 new_y = room.y
                 if i == 0:
@@ -63,79 +87,63 @@ class Museum:
                 elif i == 3:
                     new_x -= 1
 
-                # ensures that doors are created if connecting rooms have doors
-                constraints = self.get_constraints(new_x,new_y)
+                # add this new room location to the list if there isn't already one there
+                if not room_exists(new_x, new_y, current_rooms):
+                    possible_locations.append( (new_x, new_y) )
 
-                # creates a new room in the location if there isn't already a room there
-                if not self.room_exists(new_x, new_y):
-                    new_room = Room(new_x, new_y, constraints)
-                    new_room.randomize_walls()
-                    self.rooms.append(new_room)
-                    
-        self.rooms_with_adjacents.append(room)
+    #print "There are ", len(possible_locations), "possible locations"
+    
+    if len(possible_locations) == 0:
+        print "No possible room locations! Using override_doors flag"
+        return get_new_random_location(current_rooms, True)
 
-    # returns whether a room exists at a given location
-    def room_exists(self, x, y):
-        for r in self.rooms:
-            if r.x == x and r.y == y:
-                return True
-        return False
+    (final_x, final_y) = random.choice(possible_locations)
+    return (final_x, final_y)
 
-    # returns which wall directions must have a door (because a door exists in an adjacent room)
-    def get_constraints(self, x, y):
-        constraints = {}
 
-        exists_door_N = False
-        exists_door_E = False
-        exists_door_S = False
-        exists_door_W = False
+# returns whether a room exists at a given location
+def room_exists(x, y, current_rooms):
+    for room in current_rooms:
+        if room.x == x and room.y == y:
+            return True
+    return False
 
-        for r in self.rooms:
-            if r.x == x and r.y == y+1:
-                exists_door_N = True
-            if r.x == x+1 and r.y == y:
-                exists_door_E = True
-            if r.x == x and r.y == y-1:
-                exists_door_S = True
-            if r.x == x-1 and r.y == y:
-                exists_door_W = True
+def debug_print(current_rooms):
+    for room in current_rooms:
+        room.debug_print()
         
-        if exists_door_N:
-            constraints["N"] = True
-        if exists_door_E:
-            constraints["E"] = True
-        if exists_door_S:
-            constraints["S"] = True
-        if exists_door_W:
-            constraints["W"] = True
-            
-        return constraints
 
 ######################
-# ROOM Data Structure
+# MUSEUM ROOM Data Structure
 ######################
-class Room:
+class MuseumRoom:
     """Defines a single, rectangular room in a museum"""
-    def __init__(self, x, y, constraints=None):
+    def __init__(self, x, y, num_doors):
         self.x = x
         self.y = y
+        self.num_doors = num_doors
         self.doors = {"N":False, "E":False, "S":False, "W":False}
-        # (for now, assume that any wall without a door has an artwork)
+        self.doors = self.assign_doors(num_doors)
 
-        # if constraints[direction] implies => there must be a door on that wall
-        self.constraints = {"N":False, "E":False, "S":False, "W":False}
-        if(constraints):
-            for key in constraints:
-                self.constraints[key] = constraints[key]
-        self.resolve_constraints()
+    def assign_doors(self, num_doors):
+        if (num_doors > 4 or num_doors < 0):
+            print "Invalid number of doors in one room!"
+            return
+        
+        doors = {"N":False, "E":False, "S":False, "W":False}
+        while num_doors > 0:
+            wall = self.choose_random_wall()
+            while (doors[wall]):
+                wall = self.choose_random_wall()
 
-    # creates doors on a random subset of walls. resolves constraints automatically afterwards
-    def randomize_walls(self):
-        for i in xrange(0,3+1):
-            direction = self.int_to_dir(i)
-            rand = random.choice([True, False])
-            self.doors[direction] = rand
-        self.resolve_constraints()
+            doors[wall] = True
+            num_doors -= 1
+
+        return doors
+
+    def choose_random_wall(self):
+        wall = random.choice(["N","E","S","W"])
+        return wall
 
     # basically an enum, converts 0,1,2,3 to "N", "E", "S", "W"
     def int_to_dir(self, num):
@@ -145,14 +153,6 @@ class Room:
         
         direction_map = {0:"N", 1:"E", 2:"S", 3:"W"}
         return direction_map[num]
-
-    # forces doors to appear on walls with constraints
-    def resolve_constraints(self):
-        for i in xrange(0,3+1):
-            direction = self.int_to_dir(i)
-            is_constrained = self.constraints[direction]
-            if (is_constrained):
-                self.doors[direction] = True
 
     def debug_print(self):
         """ Prints a graphical representation of the room """
@@ -176,4 +176,3 @@ class Room:
         print doorW + "  ("+str(self.x)+","+str(self.y)+")  " + doorE
         print "|         |"
         print " ----" + doorS + "----"
-
