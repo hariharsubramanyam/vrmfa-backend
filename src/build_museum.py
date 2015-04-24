@@ -4,6 +4,7 @@ from deviantart.imagedata import *
 from deviantart.redis_store import *
 from floorplangen.generator import *
 import random
+import json
 
 '''
 @param dbname - The name of the Postgres database containing the rooms.
@@ -23,11 +24,14 @@ def build_museum(dbname, user, host, port, db):
         room_type, rotation = compute_rotated_room(room.doors["N"], room.doors["E"], room.doors["S"], room.doors["W"])
         possible_rooms = room_store.get_no_wall_rooms_for_type(room_type)
         if len(possible_rooms) == 0:
-            raise Exception("There are no rooms :(")
+            room_store.persist_default_room_set("./roomgen/room_data.json")
+            possible_rooms = room_store.get_no_wall_rooms_for_type(room_type)
         chosen_room = random.choice(possible_rooms)
+        chosen_room.rotation = rotation
         room_store.set_walls_for_room(chosen_room)
-        fill_rooms_with_paintings(chosen_room)
         museum_rooms.append(chosen_room)
+
+    fill_rooms_with_paintings(museum_rooms, paintings_redis)
 
     room_store.finish()
     return museum_rooms
@@ -48,6 +52,12 @@ def fill_rooms_with_paintings(rooms, paintings_redis):
             painting_index += 1
     return num_needed_paintings == painting_index
 
+def rooms_to_json(rooms):
+    result = json.dumps({
+        "rooms": [room.to_json_dict() for room in rooms]
+    })
+    return result
+
 if __name__=="__main__":
     museum_rooms = build_museum('vrmfa', 'harihar', 'localhost', 6379, 0)
-    print museum_rooms
+    print rooms_to_json(museum_rooms)

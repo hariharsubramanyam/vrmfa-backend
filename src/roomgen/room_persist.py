@@ -1,4 +1,5 @@
 from room import *
+import json
 import psycopg2
 
 '''
@@ -74,6 +75,20 @@ class RoomPersist:
         tuples = self.cursor.fetchall()
         walls = [Wall(t[1], t[2], t[3], t[4]) for t in tuples if len(t) == 5]
         room.walls = walls
+    '''
+    Load the data from the json file and persist it.
+    '''
+    def persist_default_room_set(self, file_path):
+        data = json.load(open(file_path))
+        rooms = []
+        for room_data in data["data"]:
+            room_type = room_data["type"]
+            walls = room_data["walls"]
+            walls = [Wall(wall[0][0], wall[0][1], wall[1][0], wall[1][1]) for wall in walls]
+            room = Room(room_type, Rotation.clockwise0, walls=walls)
+            rooms.append(room)
+        for room in rooms:
+            self.persist_room(room)
     '''
     Close the connection to the database.
     '''

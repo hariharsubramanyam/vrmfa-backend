@@ -1,0 +1,21 @@
+{
+  "rooms": [
+    {
+      "walls": [
+        {
+          "startx": "starting x coordinate",
+          "starty": "starting y coordinate",
+          "endx": "ending x coordinate",
+          "endy": "ending y coordinate",
+          "descr": "description of painting (<title> by <author>)",
+          "url": "URL of the painting"
+        }
+        ...
+      ]
+      "rotation": "The clockwise rotation in degrees (0, 90, 180, 270)",
+      "room_id": "The ID (a UUID) of the room",
+      "room_type":"north = 1, north_east = 2, north_south = 3, north_east_south = 4, north_east_south_west = 5"
+    }
+    ...
+  ]
+}

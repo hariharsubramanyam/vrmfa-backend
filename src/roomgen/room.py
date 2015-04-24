@@ -1,4 +1,6 @@
 import uuid
+import json
+
 '''
 An enum that represents all possible arrangements of doors in a room. Note that we consider two rooms
 identical if one can be rotated to get the other.
@@ -128,6 +130,20 @@ class Wall:
         self.image_data = image_data 
     def __str__(self):
         return "Wall((%s, %s) -> (%s, %s), image_data=%s)" % (self.startx, self.starty, self.endx, self.endy, self.image_data)
+    def to_json_dict(self):
+        painting_url = ""
+        painting_descr = ""
+        if self.image_data is not None:
+            painting_url = self.image_data.url
+            painting_descr = self.image_data.descr
+        return {
+            "startx": self.startx,
+            "starty": self.starty,
+            "endx": self.endx,
+            "endy": self.endy,
+            "url": painting_url,
+            "descr": painting_descr
+        }
     __repr__ = __str__
 
 '''
@@ -153,4 +169,11 @@ class Room:
             self.walls = walls
     def __str__(self):
         return "Room(id=%s, rotation=%s, room_type=%s, walls=%s)" % (self.room_id, self.rotation, self.room_type, self.walls)
+    def to_json_dict(self):
+        return {
+            "room_id": self.room_id,
+            "room_type": self.room_type,
+            "rotation": self.rotation,
+            "walls": [wall.to_json_dict() for wall in self.walls]
+        }
     __repr__ = __str__
