@@ -37,7 +37,7 @@ if __name__=="__main__":
                 print image_data
 
     # Create a scraper.
-    scraper = Scraper(callback, ping_interval=1)
+    scraper = Scraper(callback, ping_interval=10)
 
 
     # Run the scraper.
