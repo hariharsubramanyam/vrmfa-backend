@@ -29,4 +29,4 @@ if __name__ == "__main__":
     host = args.host
     port = args.port
     db = args.db
-    app.run(port=8000)
+    app.run(host='0.0.0.0', port=8000)
