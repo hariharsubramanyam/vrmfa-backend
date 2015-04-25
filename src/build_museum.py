@@ -28,6 +28,8 @@ def build_museum(dbname, user, host, port, db):
             possible_rooms = room_store.get_no_wall_rooms_for_type(room_type)
         chosen_room = random.choice(possible_rooms)
         chosen_room.rotation = rotation
+        chosen_room.x = room.x
+        chosen_room.y = room.y
         room_store.set_walls_for_room(chosen_room)
         museum_rooms.append(chosen_room)
 

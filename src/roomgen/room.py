@@ -155,8 +155,12 @@ class Room:
     @param walls - A list of Wall objects.
     @param rotation - A rotation as defined in Rotation.
     @param room_id - An unique identifier for the room.
+    @param x - The x-coordinate of the room.
+    @param y - The y-coordinate of the room.
     '''
     def __init__(self, room_type, rotation, walls=None, room_id=None):
+        self.x = 0
+        self.y = 0
         if room_id is None:
             self.room_id = uuid.uuid4().hex
         else:
@@ -171,6 +175,8 @@ class Room:
         return "Room(id=%s, rotation=%s, room_type=%s, walls=%s)" % (self.room_id, self.rotation, self.room_type, self.walls)
     def to_json_dict(self):
         return {
+            "x": self.x,
+            "y": self.y,
             "room_id": self.room_id,
             "room_type": self.room_type,
             "rotation": self.rotation,
