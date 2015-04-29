@@ -2,7 +2,9 @@ from roomgen.room_persist import *
 from roomgen.room import *
 from deviantart.imagedata import *
 from deviantart.redis_store import *
-from floorplangen.generator import *
+from museumpersist.persist import *
+from floorplangen.generator import Museum
+from datetime import *
 import random
 import json
 
@@ -17,6 +19,21 @@ def build_museum(dbname, user, host, port, db):
     paintings_redis = RedisStore(host, port, db)
     room_store = RoomPersist(dbname, user)
     room_store.start()
+    museum_persist = Persist(dbname, user)
+    museum_persist.start()
+
+    # Figure out the day.
+    today = datetime.today()
+    year = today.year
+    month = today.month
+    day = today.day
+
+    # Check if the museum already exists.
+    stored_museum = museum_persist.get_museum(year, month, day)
+    if stored_museum is not None:
+        room_store.finish()
+        museum_persist.finish()
+        return rooms_from_json(stored_museum)
 
     museum_rooms = []
     floor_plan = Museum()
@@ -35,7 +52,10 @@ def build_museum(dbname, user, host, port, db):
 
     fill_rooms_with_paintings(museum_rooms, paintings_redis)
 
+    rooms_json = rooms_to_json(museum_rooms)
+    museum_persist.persist_museum(year, month, day, rooms_json)
     room_store.finish()
+    museum_persist.finish()
     return museum_rooms
 
 '''
@@ -59,6 +79,37 @@ def rooms_to_json(rooms):
         "rooms": [room.to_json_dict() for room in rooms]
     })
     return result
+
+def rooms_from_json(rooms_string):
+    rooms_json = json.loads(rooms_string)
+    rooms = rooms_json["rooms"]
+    room_objs = []
+    for room in rooms:
+        room_id = room["room_id"]
+        x = room["x"]
+        y = room["y"]
+        rotation = room["rotation"]
+        room_type = room["room_type"]
+        walls = room["walls"]
+        wall_objs = []
+        for wall in walls:
+            startx = wall["startx"]
+            starty = wall["starty"]
+            descr = wall["descr"]
+            endy = wall["endy"]
+            endx = wall["endx"]
+            url = wall["url"]
+            image_data = ImageData(url, descr)
+            wall_obj = Wall(startx, starty, endx, endy, image_data=image_data)
+            wall_objs.append(wall_obj)
+        room_obj = Room(room_type, rotation)
+        room_obj.room_id = room_id
+        room_obj.walls = wall_objs
+        room_obj.x = x
+        room_obj.y = y
+        room_objs.append(room_obj)
+    return room_objs
+
 
 if __name__=="__main__":
     museum_rooms = build_museum('vrmfa', 'harihar', 'localhost', 6379, 0)
