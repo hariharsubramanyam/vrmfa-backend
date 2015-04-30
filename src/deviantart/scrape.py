@@ -37,9 +37,9 @@ class ScrapeImplementation:
             if not thumbnail.img.has_attr("alt"):
                 continue
             descr = thumbnail.img["alt"]
-            if thumbnail.has_attr(self.FULL_IMG_ATTR):
-                image_data_items.append(ImageData(thumbnail[self.FULL_IMG_ATTR], descr))
-            elif thumbnail.has_attr(self.IMG_ATTR):
+           # if thumbnail.has_attr(self.FULL_IMG_ATTR):
+           #     image_data_items.append(ImageData(thumbnail[self.FULL_IMG_ATTR], descr))
+            if thumbnail.has_attr(self.IMG_ATTR):
                 image_data_items.append(ImageData(thumbnail[self.IMG_ATTR], descr))
             else:
                 image_data_items.append(ImageData(thumbnail.img["src"], descr))
