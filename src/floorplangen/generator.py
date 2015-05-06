@@ -18,7 +18,7 @@ class Museum:
         self.rooms.append(self.start)
 
         # Pick a random number of rooms in the museum.
-        room_limit = random.randint(10, 15)
+        room_limit = random.randint(3, 8)
         num_rooms_created = 0
 
         # Continue while we haven't hit the limit and while there are still unused doors.
